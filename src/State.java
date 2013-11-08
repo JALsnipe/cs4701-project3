@@ -7,7 +7,7 @@ public class State {
 	private State parent;
 	private List<State> children;
 	char parentMove;
-	private int heuristic;
+	private double heuristic;
 	
 	public char[][] getData() {
 		return data;
@@ -30,10 +30,10 @@ public class State {
 		this.children.add(child);
 	}
 	
-	public int getHeuristic() {
+	public double getHeuristic() {
 		return heuristic;
 	}
-	public void setHeuristic(int heuristic) {
+	public void setHeuristic(double heuristic) {
 		this.heuristic = heuristic;
 	}
 	
