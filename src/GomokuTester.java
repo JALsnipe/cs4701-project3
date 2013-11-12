@@ -7,7 +7,12 @@ public class GomokuTester {
 	static int CHAIN_LENGTH;
 	static int TIME_LIMIT;
 	static char[][] board;
-	static char player;
+	//static char player;
+	
+	static char p1char;
+	static char p2char;
+	
+	static char p1first;
 	
 	public static boolean isValidMove(char[][] board, int[] move) {
 		
@@ -39,10 +44,14 @@ public class GomokuTester {
 		System.out.println("Please enter the move selection time limit s:");
 		TIME_LIMIT = in.nextInt();
 		
-		System.out.println("Please enter x or o:");
-		player = in.next().charAt(0);
+		System.out.println("Please player 1 character (x or o):");
+		p1char = in.next().charAt(0);
+		System.out.println("Player 1 is " + p1char + ".");
 		
-		System.out.println(player);
+		System.out.println("Is player 1 going first? (y or n)");
+		p1first = in.next().charAt(0);
+		
+		System.out.println("");
 		
 //		System.out.println("here");
 //		
