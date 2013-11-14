@@ -14,38 +14,29 @@ public class Actions {
 		
 		return copy;
 		}
-
-	public static double calculateHeuristic(State state, char player) {
-		char[][] board = state.getData();
-
-		if(player == 'x') {
-
-			// traverse board
-			// find x piece
-			// check 8 directions (up, down, left, right, 4x diag)
-			// if other pieces exist next to found piece, continue searching
-			// think recursively
-		}
-
-		return 0;
-
-
-	}
 	
 	public static ArrayList<State> generateChildren(State state, char player) {
 		
 		ArrayList<State> list = new ArrayList<State>();
+		
+		System.out.println("in generateChildren");
 		
 		char[][] board = copy(state.getData());
 		
 		for(int i = 0; i < GomokuTester.BOARD_SIZE; i++) {
 			for(int j = 0; j < GomokuTester.BOARD_SIZE; j++) {
 				
+				char newBoard[][] = new char[GomokuTester.BOARD_SIZE][GomokuTester.BOARD_SIZE];
+				
+				newBoard = copy(board);
+				
 				if(board[i][j] == '.') {
+					System.out.println("in generate if");
 					State newState = new State();
-					board[i][j] = player;
-					newState.setData(board);
+					newBoard[i][j] = player;
+					newState.setData(newBoard);
 					list.add(newState);
+					GomokuTester.printBoard(newState.getData());
 				}
 			}
 		}
@@ -121,13 +112,13 @@ public class Actions {
 		//count(State state, char player, int row, int col, int dirX, int dirY)
 		//count(char[][] board, char player, int row, int col, int dirX, int dirY) {
 
-		if (count(board, 'x', row, col, 1, 0) == GomokuTester.CHAIN_LENGTH)
+		if (count(board, 'X', row, col, 1, 0) == GomokuTester.CHAIN_LENGTH)
 			return true;
-		if (count(board, 'x', row, col, 0, 1) == GomokuTester.CHAIN_LENGTH)
+		if (count(board, 'X', row, col, 0, 1) == GomokuTester.CHAIN_LENGTH)
 			return true;
-		if (count(board, 'x', row, col, 1, -1) == GomokuTester.CHAIN_LENGTH)
+		if (count(board, 'X', row, col, 1, -1) == GomokuTester.CHAIN_LENGTH)
 			return true;
-		if (count(board, 'x', row, col, 1, 1) == GomokuTester.CHAIN_LENGTH)
+		if (count(board, 'X', row, col, 1, 1) == GomokuTester.CHAIN_LENGTH)
 			return true;
 
 		// If no win condition found:
@@ -149,13 +140,13 @@ public class Actions {
 		//count(State state, char player, int row, int col, int dirX, int dirY)
 		//count(char[][] board, char player, int row, int col, int dirX, int dirY) {
 
-		if (count(board, 'o', row, col, 1, 0) == 5)
+		if (count(board, 'O', row, col, 1, 0) == 5)
 			return true;
-		if (count(board, 'o', row, col, 0, 1) == 5)
+		if (count(board, 'O', row, col, 0, 1) == 5)
 			return true;
-		if (count(board, 'o', row, col, 1, -1) == 5)
+		if (count(board, 'O', row, col, 1, -1) == 5)
 			return true;
-		if (count(board, 'o', row, col, 1, 1) == 5)
+		if (count(board, 'O', row, col, 1, 1) == 5)
 			return true;
 
 		// If no win condition found:
@@ -163,7 +154,7 @@ public class Actions {
 
 	}  // end checkWinnerX()
 	
-	public static double minMaxDecision(State state, char player, int depth) {
+	public static State minMaxDecision(State state, char player, int depth) {
 		
 		// idfs
 		//if time is almost up, return node
@@ -171,9 +162,9 @@ public class Actions {
 		
 		player = swapPlayer(player);
 		
-		double v = maxValue(state, player, depth).getHeuristic();
+		State newState = maxValue(state, player, depth);
 		
-		return v;
+		return newState;
 	}
 	
 	public static State maxValue(State state, char player, int depth) {
@@ -184,23 +175,37 @@ public class Actions {
 		
 //		int depth = 0;
 		
-		if(depth == 5) {
+		if(depth == 0) {
+			System.out.println("in depth == 5");
+			System.out.println(depth);
 			double score = heuristic(state, player);
 			state.setHeuristic(score);
 			return state; // return calulated score
 		}
 		
-		int v = Integer.MIN_VALUE;
+		depth--;
+		
+		double v = Double.MIN_VALUE;
+		
+		System.out.println("in maxValue before gen children");
 		
 		ArrayList<State> list = generateChildren(state, player);
 		
+		State bestState = null;
+		
 		for(int i = 0; i < list.size(); i++) {
-			minValue(list.get(i), player, depth);
+			State min = minValue(list.get(i), player, depth);
+			if(min.getHeuristic() > v) {
+				GomokuTester.printBoard(min.getData());
+				v = min.getHeuristic();
+				list.get(i).setHeuristic(v);
+				bestState = list.get(i);
+			}
 		}
 		
-		depth++;
+		//bestState.setHeuristic(v);
 		
-		return state;
+		return bestState;
 		
 	}
 
@@ -208,31 +213,40 @@ public class Actions {
 		
 		player = swapPlayer(player);
 		
-		if(depth == 5) {
+		if(depth == 0) {
 			double score = heuristic(state, player);
 			state.setHeuristic(score);
 			return state; // return calulated score
 		}
+		depth--;
 		
-		int v = Integer.MAX_VALUE;
+		double v = Double.MAX_VALUE;
 		
 		ArrayList<State> list = generateChildren(state, player);
 		
+		State bestState = null;
+		
 		for(int i = 0; i < list.size(); i++) {
-			maxValue(list.get(i), player, depth);
+			State max = maxValue(list.get(i), player, depth);
+			if(max.getHeuristic() < v) {
+				v = max.getHeuristic();
+				//bestState = max;
+				list.get(i).setHeuristic(v);
+				bestState = list.get(i);
+			}
 		}
 		
-		depth++;
+		//bestState.setHeuristic(v);
 		
-		return state;
+		return bestState;
 		
 	}
 	
 	public static char swapPlayer(char player) {
-		if(player == 'x') {
-			player = 'y';
+		if(player == 'X') {
+			player = 'O';
 		} else {
-			player = 'x';
+			player = 'X';
 		}
 		
 		return player;
