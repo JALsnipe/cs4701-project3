@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 
@@ -46,9 +47,9 @@ public class GomokuTester {
 		Scanner in = new Scanner(System.in);
 		int[] Xmove = new int[2];
 		System.out.println("Player X, please enter an x value");
-		Xmove[0] = in.nextInt();
-		System.out.println("Player X, please enter an y value");
 		Xmove[1] = in.nextInt();
+		System.out.println("Player X, please enter an y value");
+		Xmove[0] = in.nextInt();
 
 		System.out.println("Move: " + Arrays.toString(Xmove));
 
@@ -69,6 +70,7 @@ public class GomokuTester {
 //			newState.setData(newBoard);
 			if(Actions.checkWinnerX(board, Xmove[0], Xmove[1]) == true) {
 				System.out.println("Player X wins!");
+				printBoard(board);
 				System.exit(0);
 			}
 		}
@@ -82,9 +84,9 @@ public class GomokuTester {
 		Scanner in = new Scanner(System.in);
 		int[] POmove = new int[2];
 		System.out.println("Player O, please enter an x value");
-		POmove[0] = in.nextInt();
-		System.out.println("Player O, please enter an y value");
 		POmove[1] = in.nextInt();
+		System.out.println("Player O, please enter an y value");
+		POmove[0] = in.nextInt();
 
 		System.out.println("Move: " + Arrays.toString(POmove));
 
@@ -105,6 +107,7 @@ public class GomokuTester {
 //			newState.setData(newBoard);
 			if(Actions.checkWinnerX(board, POmove[0], POmove[1]) == true) {
 				System.out.println("Player X wins!");
+				printBoard(board);
 				System.exit(0);
 			}
 		}
@@ -162,6 +165,20 @@ public class GomokuTester {
 			
 		}
 		
+		else if(choice == 3) {
+			while(true) {
+				pXComputerMove();
+				pOHumanMove();
+			}
+		}
+		
+		else if(choice == 4) {
+			while(true) {
+				randomComputerMoveX();
+				pOComputerMove();
+			}
+		}
+		
 		//x always go first.  ask the user if the human player is x, or if the computer player is x
 		
 //		System.out.println("Please player 1 character (x or o):");
@@ -185,45 +202,44 @@ public class GomokuTester {
 //		System.out.println(Actions.checkWinnerO(board, 4, 4));
 		
 		// break when you win
-		while(true) {
-			// ask user for input
-			int[] move = new int[2];
-			System.out.println("Please enter an x value");
-			move[0] = in.nextInt();
-			System.out.println("Please enter an y value");
-			move[1] = in.nextInt();
-			
-			// check if valid
-			// if yes, placeTile, move to next player
-			// if not, continue;
-			// player first, then computer
-			if(!isValidMove(board, move)) {
-				continue;
-			} else {
-				State newState = new State();
-//				char[][] newBoard = copy(board);
-//				newBoard[move[0]][move[1]] = player;
-//				newState.setData(newBoard);
-				
-				// algorithm goes here
-				
-			}
-			
-			break;
-			
-			
-//			State newState = new State();
-//			newState.setData(copy(state.getData()));
-			
-			
-		}
+//		while(true) {
+//			// ask user for input
+//			int[] move = new int[2];
+//			System.out.println("Please enter an x value");
+//			move[0] = in.nextInt();
+//			System.out.println("Please enter an y value");
+//			move[1] = in.nextInt();
+//			
+//			// check if valid
+//			// if yes, placeTile, move to next player
+//			// if not, continue;
+//			// player first, then computer
+//			if(!isValidMove(board, move)) {
+//				continue;
+//			} else {
+//				State newState = new State();
+////				char[][] newBoard = copy(board);
+////				newBoard[move[0]][move[1]] = player;
+////				newState.setData(newBoard);
+//				
+//				// algorithm goes here
+//				
+//			}
+//			
+//			break;
+//			
+//			
+////			State newState = new State();
+////			newState.setData(copy(state.getData()));
+//			
+//			
+//		}
 		
 		//System.out.println("size: " + BOARD_SIZE + " chain: " + CHAIN_LENGTH + " time: " +TIME_LIMIT);
 
 	}
 
 	private static void pOComputerMove() {
-		// TODO Auto-generated method stub
 		
 		State newState = new State();
 		char[][] newBoard = Actions.copy(board);
@@ -243,10 +259,68 @@ public class GomokuTester {
 				if(Actions.checkWinnerO(board, i, j) == true) {
 
 					System.out.println("Player O wins!");
+					printBoard(board);
 					System.exit(0);
 				}
 			}
 		}		
+	}
+	
+	private static void pXComputerMove() {
+		
+		State newState = new State();
+		char[][] newBoard = Actions.copy(board);
+//		newBoard[move[0]][move[1]] = player;
+		newState.setData(newBoard);
+		
+		System.out.println("in pOComputerMove");
+		
+		State temp = Actions.minMaxDecision(newState, 'X', 3);
+		System.out.println("temp state printed:");
+		printBoard(temp.data);
+		board = temp.getData();
+		System.out.println("score: " + temp.getHeuristic());
+		
+		for(int i = 0; i < BOARD_SIZE; i++) {
+			for(int j = 0; j < BOARD_SIZE; j++) {
+				if(Actions.checkWinnerO(board, i, j) == true) {
+
+					System.out.println("Player O wins!");
+					printBoard(board);
+					System.exit(0);
+				}
+			}
+		}		
+	}
+	
+	private static void randomComputerMoveX() {
+		
+		System.out.println("in randomComputerMoveX");
+		
+		Random generator = new Random();
+		
+		int x = generator.nextInt(BOARD_SIZE);
+		int y = generator.nextInt(BOARD_SIZE);
+		System.out.println("x: " + x);
+		System.out.println("y: " + y);
+		
+		int[] compMove = new int[2];
+		compMove[0] = y;
+		compMove[1] = x;
+		
+		if(!isValidMove(board, compMove)) {
+			randomComputerMoveX();
+		} else {
+			System.out.println("In else, inputted valid move.");
+			board[compMove[0]][compMove[1]] = 'X';
+//			printBoard(board);
+//			newState.setData(newBoard);
+			if(Actions.checkWinnerX(board, compMove[0], compMove[1]) == true) {
+				System.out.println("Player X wins!");
+				printBoard(board);
+				System.exit(0);
+			}
+		}
 	}
 
 }
