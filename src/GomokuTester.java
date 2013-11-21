@@ -20,7 +20,7 @@ public class GomokuTester {
 	
 	public static boolean isValidMove(char[][] board, int[] move) {
 		
-		if(move[0] > GomokuTester.BOARD_SIZE || move[1] > GomokuTester.BOARD_SIZE) {
+		if(move[0] > GomokuTester.BOARD_SIZE - 1 || move[1] > GomokuTester.BOARD_SIZE - 1) {
 			return false;
 		}
 		
@@ -46,10 +46,10 @@ public class GomokuTester {
 		printBoard(board);
 		Scanner in = new Scanner(System.in);
 		int[] Xmove = new int[2];
-		System.out.println("Player X, please enter an x value");
-		Xmove[1] = in.nextInt();
-		System.out.println("Player X, please enter an y value");
+		System.out.println("Player X, please enter a y (row) value");
 		Xmove[0] = in.nextInt();
+		System.out.println("Player X, please enter an x (column) value");
+		Xmove[1] = in.nextInt();
 
 		System.out.println("Move: " + Arrays.toString(Xmove));
 
@@ -83,10 +83,10 @@ public class GomokuTester {
 		printBoard(board);
 		Scanner in = new Scanner(System.in);
 		int[] POmove = new int[2];
-		System.out.println("Player O, please enter an x value");
-		POmove[1] = in.nextInt();
-		System.out.println("Player O, please enter an y value");
+		System.out.println("Player O, please enter an y (row) value");
 		POmove[0] = in.nextInt();
+		System.out.println("Player O, please enter an x (column) value");
+		POmove[1] = in.nextInt();
 
 		System.out.println("Move: " + Arrays.toString(POmove));
 
