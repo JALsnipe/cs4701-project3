@@ -65,8 +65,6 @@ public class GomokuTester {
 
 		System.out.println("Move: " + Arrays.toString(Xmove));
 
-		System.out.println("isValidMove(board, PXmove)? " + isValidMove(board, Xmove));
-
 		// check if valid
 		// if yes, placeTile, move to next player
 		// if not, continue;
@@ -76,6 +74,9 @@ public class GomokuTester {
 		} else {
 			// In else, valid move.
 			board[Xmove[0]][Xmove[1]] = 'X';
+			System.out.println("winner? " + Actions.checkWinnerX(board, Xmove[0], Xmove[1]));
+			System.out.println();
+			
 			
 			if(Actions.checkWinnerX(board, Xmove[0], Xmove[1]) == true) {
 				System.out.println("Player X wins!");
@@ -106,9 +107,10 @@ public class GomokuTester {
 		} else {
 			// In else, valid move.
 			board[POmove[0]][POmove[1]] = 'O';
+			System.out.println();
 			
 			if(Actions.checkWinnerX(board, POmove[0], POmove[1]) == true) {
-				System.out.println("Player X wins!");
+				System.out.println("Player O wins!");
 				printBoard(board);
 				System.exit(0);
 			}
@@ -187,6 +189,8 @@ public class GomokuTester {
 			while(true) {
 				pXComputerMove();
 				pOComputerMove();
+//				pOComputerMove();
+//				pXComputerMove();
 			}
 		}
 	}
@@ -196,6 +200,7 @@ public class GomokuTester {
 	 */
 	private static void pOComputerMove() {
 		
+		System.out.println("Player O Move:");
 		State newState = new State();
 		char[][] newBoard = Actions.copy(board);
 		newState.setData(newBoard);
@@ -205,6 +210,7 @@ public class GomokuTester {
 		State temp = Actions.minMaxDecision(newState, 'O', 3);
 		printBoard(temp.data);
 		board = temp.getData();
+		System.out.println();
 		
 		for(int i = 0; i < BOARD_SIZE; i++) {
 			for(int j = 0; j < BOARD_SIZE; j++) {
@@ -223,6 +229,7 @@ public class GomokuTester {
 	 */
 	private static void pXComputerMove() {
 		
+		System.out.println("Player X Move:");
 		State newState = new State();
 		char[][] newBoard = Actions.copy(board);
 		newState.setData(newBoard);
@@ -233,6 +240,7 @@ public class GomokuTester {
 		State temp = Actions.minMaxDecision(newState, 'X', 3);
 		printBoard(temp.data);
 		board = temp.getData();
+		System.out.println();
 		
 		for(int i = 0; i < BOARD_SIZE; i++) {
 			for(int j = 0; j < BOARD_SIZE; j++) {
