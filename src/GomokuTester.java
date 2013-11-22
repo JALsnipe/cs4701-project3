@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -62,9 +61,7 @@ public class GomokuTester {
 		Xmove[0] = in.nextInt();
 		System.out.println("Player X, please enter an x (column) value");
 		Xmove[1] = in.nextInt();
-
-		System.out.println("Move: " + Arrays.toString(Xmove));
-
+		
 		// check if valid
 		// if yes, placeTile, move to next player
 		// if not, continue;
@@ -74,7 +71,6 @@ public class GomokuTester {
 		} else {
 			// In else, valid move.
 			board[Xmove[0]][Xmove[1]] = 'X';
-			System.out.println("winner? " + Actions.checkWinnerX(board, Xmove[0], Xmove[1]));
 			System.out.println();
 			
 			
