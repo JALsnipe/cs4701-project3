@@ -2,28 +2,34 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
-
+/**
+ * GomokuTester.java
+ * Program tester.  Also Includes some game functions.
+ * @author jal2238
+ *
+ */
 public class GomokuTester {
 	
-	static int BOARD_SIZE;
-	static int CHAIN_LENGTH;
-	static int TIME_LIMIT;
-	static char[][] board;
-	//static char player;
+	// Constant Global Variables
+	static int BOARD_SIZE; // Master board size.
+	static int CHAIN_LENGTH; // Winning chain length.
+	static int TIME_LIMIT; // Move time limit, in seconds.
+	static char[][] board; // Board 2D char array.
 	
-	static char p1char;
-	static char p2char;
-	
-//	static char p1first;
-	
-	static char humanVsHuman;
-	
+	/**
+	 * isvalidMove checks if a tile placement on the game board is a valid move.
+	 * @param board
+	 * @param move
+	 * @return true or false
+	 */
 	public static boolean isValidMove(char[][] board, int[] move) {
 		
+		// Checks if the move is in bounds.
 		if(move[0] > GomokuTester.BOARD_SIZE - 1 || move[1] > GomokuTester.BOARD_SIZE - 1) {
 			return false;
 		}
 		
+		// Checks if the tile is being placed on an empty space.
 		if(board[move[0]][move[1]] == '.') {
 			return true;
 		}
@@ -32,6 +38,10 @@ public class GomokuTester {
 
 	}
 	
+	/**
+	 * printBoard pretty-prints the game board to System.out.
+	 * @param board
+	 */
 	public static void printBoard(char[][] board) {
 		for(int i = 0; i < BOARD_SIZE; i++) {
 			for(int j = 0; j < BOARD_SIZE; j++) {
@@ -41,8 +51,10 @@ public class GomokuTester {
 		}
 	}
 	
+	/**
+	 * pXHumanMove is called when a human player is placing a tile as player X.
+	 */
 	public static void pXHumanMove() {
-		//		while(pXmoveBool == true) {
 		printBoard(board);
 		Scanner in = new Scanner(System.in);
 		int[] Xmove = new int[2];
@@ -62,24 +74,21 @@ public class GomokuTester {
 		if(!isValidMove(board, Xmove)) {
 			pXHumanMove();
 		} else {
-			System.out.println("In else, inputted valid move.");
-//			State newState = new State();
-//			char[][] newBoard = Actions.copy(board);
+			// In else, valid move.
 			board[Xmove[0]][Xmove[1]] = 'X';
-//			printBoard(board);
-//			newState.setData(newBoard);
+			
 			if(Actions.checkWinnerX(board, Xmove[0], Xmove[1]) == true) {
 				System.out.println("Player X wins!");
 				printBoard(board);
 				System.exit(0);
 			}
 		}
-		//			pXmoveBool = false;
-		//		}
 	}
 	
+	/**
+	 * pOHumanMove is called when a human player is placing a tile as player O.
+	 */
 	public static void pOHumanMove() {
-		//		while(pXmoveBool == true) {
 		printBoard(board);
 		Scanner in = new Scanner(System.in);
 		int[] POmove = new int[2];
@@ -88,10 +97,6 @@ public class GomokuTester {
 		System.out.println("Player O, please enter an x (column) value");
 		POmove[1] = in.nextInt();
 
-		System.out.println("Move: " + Arrays.toString(POmove));
-
-		System.out.println("isValidMove(board, PXmove)? " + isValidMove(board, POmove));
-
 		// check if valid
 		// if yes, placeTile, move to next player
 		// if not, continue;
@@ -99,22 +104,21 @@ public class GomokuTester {
 		if(!isValidMove(board, POmove)) {
 			pOHumanMove();
 		} else {
-			System.out.println("In else, inputted valid move.");
-//			State newState = new State();
-//			char[][] newBoard = Actions.copy(board);
+			// In else, valid move.
 			board[POmove[0]][POmove[1]] = 'O';
-//			printBoard(board);
-//			newState.setData(newBoard);
+			
 			if(Actions.checkWinnerX(board, POmove[0], POmove[1]) == true) {
 				System.out.println("Player X wins!");
 				printBoard(board);
 				System.exit(0);
 			}
 		}
-		//			pXmoveBool = false;
-		//		}
 	}
 
+	/**
+	 * main
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		
 		Scanner in = new Scanner(System.in);
@@ -124,7 +128,7 @@ public class GomokuTester {
 		BOARD_SIZE = in.nextInt();
 		
 		board = new char[BOARD_SIZE][BOARD_SIZE];
-		//initialize array
+		//initialize board
 		for(int i = 0; i < BOARD_SIZE; i++) {
 			for(int j = 0; j < BOARD_SIZE; j++) {
 				board[i][j] = '.';
@@ -146,7 +150,7 @@ public class GomokuTester {
 		
 		int choice = in.nextInt();
 		
-		if(choice == 1) {
+		if(choice == 1) { // Human (X) vs Human (O)
 			
 			while(true) {
 				
@@ -156,7 +160,7 @@ public class GomokuTester {
 			}
 		}
 		
-		else if(choice == 2) {
+		else if(choice == 2) { // Human (X) vs. Computer (O)
 			while(true) {
 				
 				pXHumanMove();
@@ -165,103 +169,42 @@ public class GomokuTester {
 			
 		}
 		
-		else if(choice == 3) {
+		else if(choice == 3) { // Computer (X) vs. Human (O)
 			while(true) {
 				pXComputerMove();
 				pOHumanMove();
 			}
 		}
 		
-		else if(choice == 4) {
+		else if(choice == 4) { // Randomly-moving player (X) vs. Computer (O)
 			while(true) {
 				randomComputerMoveX();
 				pOComputerMove();
 			}
 		}
 		
-		else if(choice == 5) {
+		else if(choice == 5) { // Computer (X) vs. Computer (O)
 			while(true) {
 				pXComputerMove();
 				pOComputerMove();
 			}
 		}
-		
-		//x always go first.  ask the user if the human player is x, or if the computer player is x
-		
-//		System.out.println("Please player 1 character (x or o):");
-//		p1char = in.next().charAt(0);
-//		System.out.println("Player 1 is " + p1char + ".");
-//		
-//		System.out.println("Is player 1 going first? (y or n)");
-//		p1first = in.next().charAt(0);
-		
-//		System.out.println("");
-		
-//		System.out.println("here");
-//		
-//		System.out.println("count and check winner test");
-//		board[1][1] = 'x';
-//		board[2][2] = 'x';
-//		board[3][3] = 'x';
-//		board[4][4] = 'x';
-//		
-//		System.out.println(Actions.checkWinnerX(board, 4, 4));
-//		System.out.println(Actions.checkWinnerO(board, 4, 4));
-		
-		// break when you win
-//		while(true) {
-//			// ask user for input
-//			int[] move = new int[2];
-//			System.out.println("Please enter an x value");
-//			move[0] = in.nextInt();
-//			System.out.println("Please enter an y value");
-//			move[1] = in.nextInt();
-//			
-//			// check if valid
-//			// if yes, placeTile, move to next player
-//			// if not, continue;
-//			// player first, then computer
-//			if(!isValidMove(board, move)) {
-//				continue;
-//			} else {
-//				State newState = new State();
-////				char[][] newBoard = copy(board);
-////				newBoard[move[0]][move[1]] = player;
-////				newState.setData(newBoard);
-//				
-//				// algorithm goes here
-//				
-//			}
-//			
-//			break;
-//			
-//			
-////			State newState = new State();
-////			newState.setData(copy(state.getData()));
-//			
-//			
-//		}
-		
-		//System.out.println("size: " + BOARD_SIZE + " chain: " + CHAIN_LENGTH + " time: " +TIME_LIMIT);
-
 	}
 
+	/**
+	 * pOComputerMove is called when a computer player is placing a tile as player O.
+	 */
 	private static void pOComputerMove() {
 		
 		State newState = new State();
 		char[][] newBoard = Actions.copy(board);
-//		newBoard[move[0]][move[1]] = player;
 		newState.setData(newBoard);
 		newState.setAlpha(Double.MAX_VALUE);
 		newState.setBeta(Double.MIN_VALUE);
 		
-		System.out.println("in pOComputerMove");
-		
 		State temp = Actions.minMaxDecision(newState, 'O', 3);
-		System.out.println("temp state printed:");
 		printBoard(temp.data);
 		board = temp.getData();
-		System.out.println("score: " + temp.getHeuristic());
 		
 		for(int i = 0; i < BOARD_SIZE; i++) {
 			for(int j = 0; j < BOARD_SIZE; j++) {
@@ -275,22 +218,21 @@ public class GomokuTester {
 		}		
 	}
 	
+	/**
+	 * pXComputerMove is called when a computer player is placing a tile as player X.
+	 */
 	private static void pXComputerMove() {
 		
 		State newState = new State();
 		char[][] newBoard = Actions.copy(board);
-//		newBoard[move[0]][move[1]] = player;
 		newState.setData(newBoard);
 		newState.setAlpha(Double.MAX_VALUE);
 		newState.setBeta(Double.MAX_VALUE * -1);
 		
-		System.out.println("in pOComputerMove");
 		
 		State temp = Actions.minMaxDecision(newState, 'X', 3);
-		System.out.println("temp state printed:");
 		printBoard(temp.data);
 		board = temp.getData();
-		System.out.println("score: " + temp.getHeuristic());
 		
 		for(int i = 0; i < BOARD_SIZE; i++) {
 			for(int j = 0; j < BOARD_SIZE; j++) {
@@ -304,14 +246,16 @@ public class GomokuTester {
 		}		
 	}
 	
+	/**
+	 * randomComputerMoveX generates a random valid move for player X.
+	 */
 	private static void randomComputerMoveX() {
-		
-		System.out.println("in randomComputerMoveX");
-		
+				
 		Random generator = new Random();
 		
 		int x = generator.nextInt(BOARD_SIZE);
 		int y = generator.nextInt(BOARD_SIZE);
+		System.out.println("Random Computer Move:");
 		System.out.println("x: " + x);
 		System.out.println("y: " + y);
 		
@@ -322,10 +266,8 @@ public class GomokuTester {
 		if(!isValidMove(board, compMove)) {
 			randomComputerMoveX();
 		} else {
-			System.out.println("In else, inputted valid move.");
+			// In else, valid move
 			board[compMove[0]][compMove[1]] = 'X';
-//			printBoard(board);
-//			newState.setData(newBoard);
 			if(Actions.checkWinnerX(board, compMove[0], compMove[1]) == true) {
 				System.out.println("Player X wins!");
 				printBoard(board);
@@ -333,5 +275,4 @@ public class GomokuTester {
 			}
 		}
 	}
-
 }

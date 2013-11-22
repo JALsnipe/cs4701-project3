@@ -1,5 +1,11 @@
 import java.util.List;
 
+/**
+ * State.java
+ * Defines a State Object
+ * @author jal2238
+ *
+ */
 
 public class State {
 	
