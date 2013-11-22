@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class Actions {
@@ -19,7 +20,7 @@ public class Actions {
 		
 		ArrayList<State> list = new ArrayList<State>();
 		
-		System.out.println("in generateChildren");
+//		System.out.println("in generateChildren");
 		
 		char[][] board = copy(state.getData());
 		
@@ -31,15 +32,17 @@ public class Actions {
 				newBoard = copy(board);
 				
 				if(board[i][j] == '.') {
-					System.out.println("in generate if");
+//					System.out.println("in generate if");
 					State newState = new State();
 					newBoard[i][j] = player;
 					newState.setData(newBoard);
 					list.add(newState);
-					GomokuTester.printBoard(newState.getData());
+//					GomokuTester.printBoard(newState.getData());
 				}
 			}
 		}
+//		System.out.println("start print list");
+//		System.out.println(list);
 		return list;
 	}
 
@@ -70,7 +73,7 @@ public class Actions {
 
 		//		char[][] board = state.getData();
 
-		int ct = 1;  // Number of pieces in a row belonging to the player.
+		int ct = 0;  // Number of pieces in a row belonging to the player.
 
 		int r, c = 0;    // A row and column to be examined
 
@@ -78,7 +81,7 @@ public class Actions {
 		c = col + dirY;
 		while ( r >= 0 && r < GomokuTester.BOARD_SIZE && c >= 0 && c < GomokuTester.BOARD_SIZE && board[r][c] == player ) {
 			// Square is on the board and contains one of the players's pieces.
-			System.out.println("in while1");
+//			System.out.println("in while1");
 			ct++;
 			r += dirX;  // Go on to next square in this direction.
 			c += dirY;
@@ -88,12 +91,13 @@ public class Actions {
 		c = col - dirY;
 		while ( r >= 0 && r < GomokuTester.BOARD_SIZE && c >= 0 && c < GomokuTester.BOARD_SIZE && board[r][c] == player ) {
 			// Square is on the board and contains one of the players's pieces.
-			System.out.println("in while2");
+//			System.out.println("in while2");
 			ct++;
 			r -= dirX;   // Go on to next square in this direction.
 			c -= dirY;
 		}
 
+//		System.out.println("count: " + ct);
 		return ct;
 
 	}  // end count()
@@ -140,13 +144,13 @@ public class Actions {
 		//count(State state, char player, int row, int col, int dirX, int dirY)
 		//count(char[][] board, char player, int row, int col, int dirX, int dirY) {
 
-		if (count(board, 'O', row, col, 1, 0) == 5)
+		if (count(board, 'O', row, col, 1, 0) == GomokuTester.CHAIN_LENGTH)
 			return true;
-		if (count(board, 'O', row, col, 0, 1) == 5)
+		if (count(board, 'O', row, col, 0, 1) == GomokuTester.CHAIN_LENGTH)
 			return true;
-		if (count(board, 'O', row, col, 1, -1) == 5)
+		if (count(board, 'O', row, col, 1, -1) == GomokuTester.CHAIN_LENGTH)
 			return true;
-		if (count(board, 'O', row, col, 1, 1) == 5)
+		if (count(board, 'O', row, col, 1, 1) == GomokuTester.CHAIN_LENGTH)
 			return true;
 
 		// If no win condition found:
@@ -156,28 +160,43 @@ public class Actions {
 	
 	public static State minMaxDecision(State state, char player, int depth) {
 		
+		double startTime = new Date().getTime();
+//		System.out.println("start time: " + startTime);
+//		System.out.println("TIME_LIMIT: " + GomokuTester.TIME_LIMIT);
+		double endTime = startTime + (GomokuTester.TIME_LIMIT * 1000);
+//		System.out.println("calculated end time: " + endTime);
+//		System.out.println("endTime: " + (endTime/1000000000));
+		
 		// idfs
 		//if time is almost up, return node
 		// for now, make a depth limit
 		
 		player = swapPlayer(player);
 		
-		State newState = maxValue(state, player, depth);
+		State newState = maxValue(state, player, depth, startTime, endTime);
 		
 		return newState;
 	}
 	
-	public static State maxValue(State state, char player, int depth) {
+	public static State maxValue(State state, char player, int depth, double startTime, double endTime) {
 		
+//		System.out.println("state: " + state + "player: " + player + "depth: " + depth);
+		if(state.getAlpha() == Double.MAX_VALUE) {
+//			System.out.println("should work");
+		}
 		// for first call, pass 0 as depth
 		
 		player = swapPlayer(player);
 		
 //		int depth = 0;
 		
-		if(depth == 0) {
-			System.out.println("in depth == 5");
-			System.out.println(depth);
+		if(depth == 0 || new Date().getTime() > (endTime - 10)) {
+//			System.out.println("in depth == 5");
+//			System.out.println(depth);
+//			System.out.println("time: " + (System.nanoTime() - startTime));
+//			System.out.println("start time: " + startTime);
+//			System.out.println("end time: " + endTime);
+//			System.out.println("difference: " + (startTime - endTime));
 			double score = heuristic(state, player);
 			state.setHeuristic(score);
 			return state; // return calulated score
@@ -185,35 +204,55 @@ public class Actions {
 		
 		depth--;
 		
-		double v = Double.MIN_VALUE;
+		double v = Double.MAX_VALUE * -1;
 		
-		System.out.println("in maxValue before gen children");
+//		System.out.println("in maxValue before gen children");
 		
 		ArrayList<State> list = generateChildren(state, player);
 		
 		State bestState = null;
 		
 		for(int i = 0; i < list.size(); i++) {
-			State min = minValue(list.get(i), player, depth);
+//			System.out.println("in i loop");
+			State min = minValue(list.get(i), player, depth, startTime, endTime);
+//			System.out.println("min.getHueristic: " + min.getHeuristic());
+//			System.out.println("v: " + v);
 			if(min.getHeuristic() > v) {
-				GomokuTester.printBoard(min.getData());
+//				System.out.println("if min > v");
+//				GomokuTester.printBoard(min.getData());
 				v = min.getHeuristic();
 				list.get(i).setHeuristic(v);
 				bestState = list.get(i);
+				
 			}
+			
+			if(v >= state.getBeta()) {
+				return bestState;
+			}
+			
+			if(v > state.getAlpha()) {
+//				state.getAlpha() = v;
+				bestState.setAlpha(v);
+			} else {
+//				alpha = beta;
+				bestState.setAlpha(state.getAlpha());
+			}
+			
 		}
 		
 		//bestState.setHeuristic(v);
-		
+//		System.out.println("return beststate");
 		return bestState;
 		
 	}
 
-	public static State minValue(State state, char player, int depth) {
+	public static State minValue(State state, char player, int depth, double startTime, double endTime) {
 		
 		player = swapPlayer(player);
 		
-		if(depth == 0) {
+		if(depth == 0 || new Date().getTime() > endTime - 100) {
+//			System.out.print("time: ");
+//			System.out.println((System.nanoTime() - startTime) / 1000000000);
 			double score = heuristic(state, player);
 			state.setHeuristic(score);
 			return state; // return calulated score
@@ -227,12 +266,25 @@ public class Actions {
 		State bestState = null;
 		
 		for(int i = 0; i < list.size(); i++) {
-			State max = maxValue(list.get(i), player, depth);
+			State max = maxValue(list.get(i), player, depth, startTime, endTime);
+//			System.out.println("max: " + max);
 			if(max.getHeuristic() < v) {
 				v = max.getHeuristic();
 				//bestState = max;
 				list.get(i).setHeuristic(v);
 				bestState = list.get(i);
+			}
+			
+			if(v <= state.getAlpha()) {
+				return bestState;
+			}
+			
+			if(v < state.getBeta()) {
+//				state.getAlpha() = v;
+				bestState.setBeta(v);
+			} else {
+//				alpha = beta;
+				bestState.setBeta(state.getBeta());
 			}
 		}
 		
@@ -267,16 +319,20 @@ public class Actions {
 		
 		for(int i = 0; i < GomokuTester.BOARD_SIZE; i++) {
 			for(int j = 0; j < GomokuTester.BOARD_SIZE; j++) {
-				maximum = count(state.getData(), player, i, j, 1, 0); //horizontal
-				int count2 = count(state.getData(), player, i, j, 0, 1); //vertical
+				maximum = heuristicCount(state.getData(), player, i, j, 1, 0); //horizontal
+				System.out.println("count: " + maximum);
+				int count2 = heuristicCount(state.getData(), player, i, j, 0, 1); //vertical
+				System.out.println("count2: " + count2);
 				if(count2 > maximum) {
 					maximum = count2;
 				}
-				int count3 = count(state.getData(), player, i, j, 1, 1); //diag1
+				int count3 = heuristicCount(state.getData(), player, i, j, 1, 1); //diag1
+				System.out.println("count3: " + count3);
 				if (count3 > maximum) {
 					maximum = count3;
 				}
-				int count4 = count(state.getData(), player, i, j, 1, -1); //diag2
+				int count4 = heuristicCount(state.getData(), player, i, j, 1, -1); //diag2
+				System.out.println("count4: " + count4);
 				if (count4 > maximum) {
 					maximum = count4;
 				}
@@ -285,5 +341,36 @@ public class Actions {
 		}
 		return maximum;
 	}
+	
+	public static int heuristicCount(char[][] board, char player, int row, int col, int dirX, int dirY) {
+
+		int ct = 1;  // Number of pieces in a row belonging to the player.
+
+		int r, c = 0;    // A row and column to be examined
+
+		r = row + dirX;  // Look at square in specified direction.
+		c = col + dirY;
+		while ( r >= 0 && r < GomokuTester.BOARD_SIZE && c >= 0 && c < GomokuTester.BOARD_SIZE && board[r][c] == player ) {
+			// Square is on the board and contains one of the players's pieces.
+//			System.out.println("in while1");
+			ct++;
+			r += dirX;  // Go on to next square in this direction.
+			c += dirY;
+		}
+
+		r = row - dirX;  // Look in the opposite direction.
+		c = col - dirY;
+		while ( r >= 0 && r < GomokuTester.BOARD_SIZE && c >= 0 && c < GomokuTester.BOARD_SIZE && board[r][c] == player ) {
+			// Square is on the board and contains one of the players's pieces.
+//			System.out.println("in while2");
+			ct++;
+			r -= dirX;   // Go on to next square in this direction.
+			c -= dirY;
+		}
+
+//		System.out.println("count: " + ct);
+		return ct;
+
+	}  // end heuristicCount()
 	
 }

@@ -179,6 +179,13 @@ public class GomokuTester {
 			}
 		}
 		
+		else if(choice == 5) {
+			while(true) {
+				pXComputerMove();
+				pOComputerMove();
+			}
+		}
+		
 		//x always go first.  ask the user if the human player is x, or if the computer player is x
 		
 //		System.out.println("Please player 1 character (x or o):");
@@ -245,6 +252,8 @@ public class GomokuTester {
 		char[][] newBoard = Actions.copy(board);
 //		newBoard[move[0]][move[1]] = player;
 		newState.setData(newBoard);
+		newState.setAlpha(Double.MAX_VALUE);
+		newState.setBeta(Double.MIN_VALUE);
 		
 		System.out.println("in pOComputerMove");
 		
@@ -272,6 +281,8 @@ public class GomokuTester {
 		char[][] newBoard = Actions.copy(board);
 //		newBoard[move[0]][move[1]] = player;
 		newState.setData(newBoard);
+		newState.setAlpha(Double.MAX_VALUE);
+		newState.setBeta(Double.MAX_VALUE * -1);
 		
 		System.out.println("in pOComputerMove");
 		
@@ -285,7 +296,7 @@ public class GomokuTester {
 			for(int j = 0; j < BOARD_SIZE; j++) {
 				if(Actions.checkWinnerO(board, i, j) == true) {
 
-					System.out.println("Player O wins!");
+					System.out.println("Player X wins!");
 					printBoard(board);
 					System.exit(0);
 				}

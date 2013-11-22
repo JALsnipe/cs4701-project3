@@ -8,6 +8,8 @@ public class State {
 	private List<State> children;
 	char parentMove;
 	private double heuristic;
+	double alpha;
+	double beta;
 	
 	public char[][] getData() {
 		return data;
@@ -37,6 +39,20 @@ public class State {
 		this.heuristic = heuristic;
 	}
 	
+	public double getAlpha() {
+		return alpha;
+	}
 	
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
+	}
+	
+	public double getBeta() {
+		return beta;
+	}
+	
+	public void setBeta(double beta) {
+		this.beta = beta;
+	}
 
 }
